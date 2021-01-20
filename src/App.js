@@ -1,25 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import './App.css'
+import React, { useState, useEffect } from 'react'
+// import socketIOClient from 'socket.io-client'
 
-function App() {
+import io from 'socket.io-client'
+const ENDPOINT = 'http://localhost:3000/'
+// const socket = io(ENDPOINT, {
+//   withCredentials: true,
+//   extraHeaders: {
+//     'my-custom-header': 'abcd'
+//   }
+// })
+const socket = io(ENDPOINT)
+
+function App () {
+  const [response, setResponse] = useState('')
+
+  useEffect(() => {
+    // const socket = io(ENDPOINT, {
+    //   withCredentials: true,
+    //   extraHeaders: {
+    //     'my-custom-header': 'abcd'
+    //   }
+    // })
+
+    socket.on('refresh', data => {
+      setResponse(data)
+      console.log(data)
+    })
+  }, [])
+
+  const send = (val) => {
+    socket.emit('document', val)
+    setResponse(val)
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='App'>
+      <p>Airtex react</p>
+      <p>{response}</p>
+      <textarea onChange={(e) => send(e.target.value)} value={response} />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
